@@ -29,8 +29,8 @@ Scalability: 4-bit adder 2.7 ms → 32-bit adder 112 ms (linear growth).
 ## Repository Structure
 
 ```
-├── designs/                  # Verilog source files
-│   ├── adder_4bit.v          # 4-bit ripple carry adder
+├── designs/                  # Verilog source files (8 designs + 2 mutants)
+│   ├── adder_4bit.v          # 4-bit ripple carry adder (core benchmark)
 │   ├── adder_8bit.v          # 8-bit hierarchical adder
 │   ├── adder_16bit.v         # 16-bit parameterised adder
 │   ├── adder_32bit.v         # 32-bit parameterised adder
@@ -46,15 +46,15 @@ Scalability: 4-bit adder 2.7 ms → 32-bit adder 112 ms (linear growth).
 │   ├── parse_aiger.py        # AIGER ASCII → NetworkX DAG
 │   ├── cone_extract.py       # Output cone extraction
 │   ├── wl_hash.py            # WL hashing (structural + semantic)
-│   ├── match_cones.py        # Cone-level matching
-│   ├── advanced_wl.py        # Polarity-aware + hybrid WL
+│   ├── match_cones.py        # Cone-level matching by WL hash
+│   ├── advanced_wl.py        # Polarity-aware + hybrid WL scoring
 │   ├── experiments.py        # 5-experiment suite (baseline vs advanced)
-│   ├── thesis_plots.py       # Thesis-quality figure generation
-│   ├── generate_plots.py     # Additional plot generation
+│   ├── thesis_plots.py       # Thesis-quality figure generation (6 plots)
+│   ├── generate_plots.py     # Additional plot generation (7 plots)
 │   ├── graph_stats.py        # Graph/cone statistics → CSV
 │   ├── explainability.py     # Text report generation
-│   ├── run_thesis.py         # Master runner: synthesis → experiments → plots
-│   ├── run_all.py            # Original pipeline runner
+│   ├── run_thesis.py         # ★ Master runner: synthesis → experiments → plots
+│   ├── run_all.py            # Original pipeline runner (9 phases)
 │   └── run_experiments.py    # Standalone experiment runner
 ├── aig_output/               # Synthesised AIGER files (pre-generated)
 ├── results/
@@ -64,78 +64,239 @@ Scalability: 4-bit adder 2.7 ms → 32-bit adder 112 ms (linear growth).
 └── requirements.txt          # Python dependencies
 ```
 
-## Quick Start (No Yosys needed)
+---
 
-The repository includes **pre-generated AIGER files** in `aig_output/`, so you can run
-all experiments without installing Yosys. Just clone, install Python dependencies, and run.
+## End-to-End Setup Guide
 
-### Windows (PowerShell)
+Follow these steps in order to set up everything from scratch on a clean machine.
 
+### Prerequisites
+
+| Tool | Version | Purpose |
+|---|---|---|
+| **Git** | Any recent | Clone the repository |
+| **Python** | 3.10 or newer | Run the pipeline |
+| **Yosys** (via oss-cad-suite) | 0.40+ | Synthesise Verilog → AIGER |
+
+---
+
+### Step 1 — Install Git
+
+**Windows:**
 ```powershell
+winget install --id Git.Git -e --accept-source-agreements --accept-package-agreements
+```
+Then **restart your terminal** (or open a new PowerShell window) so `git` is on PATH.
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt update && sudo apt install -y git
+```
+
+**macOS:**
+```bash
+xcode-select --install      # installs git as part of command-line tools
+```
+
+Verify:
+```
+git --version
+```
+
+---
+
+### Step 2 — Install Python
+
+**Windows:**
+
+Download from https://www.python.org/downloads/ (3.10 or newer).  
+During installation, **check "Add Python to PATH"**.
+
+Or via winget:
+```powershell
+winget install --id Python.Python.3.12 -e
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt install -y python3 python3-pip python3-venv
+```
+
+**macOS:**
+```bash
+brew install python@3.12
+```
+
+Verify:
+```
+python --version        # Windows
+python3 --version       # Linux/macOS
+```
+
+> **Note:** On some Windows machines, use `py` instead of `python`.
+
+---
+
+### Step 3 — Clone the Repository
+
+```bash
 git clone https://github.com/AbhilashAgarwalIITJ/Thesis.git
 cd Thesis
+```
+
+---
+
+### Step 4 — Create a Python Virtual Environment & Install Dependencies
+
+**Windows (PowerShell):**
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python src/run_thesis.py
 ```
 
-### Linux / macOS
+> If you get an execution policy error, run this first:  
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`
 
+**Linux / macOS:**
 ```bash
-git clone https://github.com/AbhilashAgarwalIITJ/Thesis.git
-cd Thesis
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python src/run_thesis.py
 ```
 
-Results will be written to `results/csv/`, `results/plots/`, and `results/tables/`.
+This installs: `networkx`, `matplotlib`, `numpy`, `pandas`, `tabulate`.
 
-## Full Setup (with Yosys for re-synthesis)
+---
 
-If you want to re-synthesise the Verilog designs from scratch (not required — AIGs
-are already included), install Yosys:
+### Step 5 — Install Yosys (oss-cad-suite)
 
-### Windows
+Yosys is the open-source synthesis tool that converts Verilog into AIGER format.
+The easiest way to get it is via **oss-cad-suite** (pre-built binaries including Yosys + ABC).
 
-1. Download [oss-cad-suite](https://github.com/YosysHQ/oss-cad-suite-build/releases) (the `windows-x64` self-extracting `.exe`)
-2. Extract it into the project folder (creates an `oss-cad-suite/` directory)
-3. Add to PATH before running:
+#### Windows
 
-```powershell
-$env:PATH = ".\oss-cad-suite\bin;.\oss-cad-suite\lib;" + $env:PATH
-yosys -V   # should print "Yosys 0.x ..."
-python src/run_thesis.py
+1. Go to https://github.com/YosysHQ/oss-cad-suite-build/releases
+2. Download the latest **`oss-cad-suite-windows-x64-YYYYMMDD.exe`** (≈300 MB)
+3. Run the `.exe` — it is a self-extracting archive. Extract it **into the project folder** so you get:
+   ```
+   Thesis/
+     oss-cad-suite/
+       bin/
+       lib/
+       ...
+   ```
+4. Add both `bin/` and `lib/` to your PATH in the same terminal session:
+   ```powershell
+   $env:PATH = "$PWD\oss-cad-suite\bin;$PWD\oss-cad-suite\lib;" + $env:PATH
+   ```
+5. Verify:
+   ```powershell
+   yosys -V
+   ```
+   Expected output: `Yosys 0.xx (git sha1 ..., ...)`
+
+> **Important (Windows only):** Yosys needs **both** `bin/` and `lib/` on PATH for DLL loading.  
+> The `synthesize.py` script auto-detects `oss-cad-suite/` in the project root and adds it to PATH automatically, so once extracted to the right place you don't need to set PATH manually when running the pipeline.
+
+#### Linux (Ubuntu/Debian)
+
+Option A — Package manager:
+```bash
+sudo apt install -y yosys
 ```
 
-### Linux
+Option B — oss-cad-suite (for latest version):
+```bash
+# Download the linux-x64 release
+wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-04-16/oss-cad-suite-linux-x64-20260416.tgz
+tar -xzf oss-cad-suite-linux-x64-20260416.tgz
+export PATH="$PWD/oss-cad-suite/bin:$PATH"
+yosys -V
+```
+
+#### macOS
 
 ```bash
-sudo apt install yosys   # Ubuntu/Debian
-# or download oss-cad-suite and add bin/ to PATH
-python src/run_thesis.py
+brew install yosys
+# or download oss-cad-suite darwin-x64 release from GitHub
 ```
 
-## Usage
+---
 
-### Full Pipeline (recommended)
+### Step 6 — Run the Full Pipeline
+
+Make sure your virtual environment is activated and (on Windows) Yosys is on PATH,
+then run:
 
 ```bash
 python src/run_thesis.py
 ```
 
-Runs everything end-to-end:
-1. Synthesis (skipped automatically if `aig_output/` has pre-built `.aig` files)
-2. Parses AIGER files into graph representations
-3. Runs 5 experiments (mutation, optimisation, cross-design, scalability, convergence)
-4. Generates 6 tables, 6 thesis figures, and prints discussion notes
+This executes the complete pipeline:
 
-### Individual Modules
+| Phase | What happens |
+|---|---|
+| **Synthesis** | Converts all 10 Verilog designs into AIGER at 3 optimisation levels (O0, O1, O2) → `aig_output/` |
+| **AIG Loading** | Parses all `.aig` files into NetworkX directed graphs |
+| **Experiment 1** | Pipeline validation — end-to-end on 4-bit adder |
+| **Experiment 2** | Self-equivalence under re-synthesis (O0 vs O1 vs O2) |
+| **Experiment 3** | Mutation detection (gate replace + carry inversion) |
+| **Experiment 4** | Scalability analysis (4-bit → 32-bit) |
+| **Experiment 5** | WL iteration depth sensitivity (k = 1..6) |
+| **Tables** | 6 formatted result tables → `results/tables/` |
+| **Plots** | 13 publication-ready figures → `results/plots/` |
+| **CSVs** | 18 raw data files → `results/csv/` |
+
+Expected runtime: **under 30 seconds** on a modern machine.
+
+> **Note:** If the `aig_output/` directory already contains `.aig` files (which it does
+> in the cloned repo), synthesis is **skipped automatically**. To force re-synthesis,
+> delete the `aig_output/` folder before running.
+
+---
+
+### Step 7 — Check the Results
+
+After the run completes:
+
+```bash
+# View a result table
+cat results/tables/table4_comparison.txt
+
+# List all generated plots
+ls results/plots/
+
+# Open a CSV in any spreadsheet tool
+# results/csv/table4_comparison.csv
+```
+
+| Directory | Files | Contents |
+|---|---|---|
+| `results/csv/` | 18 CSVs | Benchmark stats, matching details, scalability timings, convergence data |
+| `results/plots/` | 13 PNGs | Bar charts, line plots, heatmaps, AIG visualisation |
+| `results/tables/` | 6 TXTs | Formatted grid tables for each experiment |
+
+---
+
+## Alternative Run Modes
+
+### Run Only Experiments (skip synthesis + use pre-built AIGs)
+
+```bash
+python src/run_experiments.py
+```
+
+### Run Original 9-Phase Pipeline
+
+```bash
+python src/run_all.py
+```
+
+### Use Individual Modules in Python
 
 ```python
-import sys, os
+import sys
 sys.path.insert(0, "src")
 
 from parse_aiger import parse_aiger_file, aiger_to_networkx
@@ -155,15 +316,20 @@ for name, h in hashes.items():
     print(f"{name}: {h}")
 ```
 
-## Output
+---
 
-All results are written to `results/`:
+## Troubleshooting
 
-| Directory | Contents |
+| Problem | Solution |
 |---|---|
-| `results/csv/` | 18 CSV files — benchmark stats, matching details, scalability timings, convergence data |
-| `results/plots/` | 13 PNG figures — publication-ready charts and visualisations |
-| `results/tables/` | 6 text files — formatted grid tables for each experiment |
+| `python` not found on Windows | Try `py` or `python3` instead. Or reinstall Python with "Add to PATH" checked. |
+| `yosys` not found | Ensure oss-cad-suite `bin/` and `lib/` are on PATH. On Windows, the script auto-detects if extracted in project root. |
+| `Activate.ps1 cannot be loaded` | Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` first. |
+| `pip install` fails | Make sure you activated the venv first (`.\.venv\Scripts\Activate.ps1` or `source .venv/bin/activate`). |
+| Synthesis produces different results | Expected — different Yosys versions may produce slightly different AIGs. Core experiments still work. |
+| DLL load errors on Windows | Both `oss-cad-suite\bin\` AND `oss-cad-suite\lib\` must be on PATH. |
+
+---
 
 ## Method Summary
 
