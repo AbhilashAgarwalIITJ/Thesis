@@ -161,6 +161,16 @@ def match_pair(cones_a, cones_b, name_a, name_b,
 #  EXPERIMENT 1 — BENCHMARK CHARACTERISATION
 # ================================================================
 def exp1_benchmark(aig_results):
+    """
+    Experiment 1: Benchmark Characterisation.
+
+    Computes per-design graph statistics (PI, PO, AND gates, nodes,
+    edges, depth, cone count, average cone size) for all loaded AIGs.
+
+    Writes: results/csv/table1_benchmark.csv
+            results/tables/table1_benchmark.txt
+    Returns: list of dicts, one per design.
+    """
     print("\n" + "=" * 70)
     print("  EXPERIMENT 1: BENCHMARK CHARACTERISATION")
     print("=" * 70)
@@ -191,6 +201,17 @@ def exp1_benchmark(aig_results):
 #  EXPERIMENT 2 — MATCHING (baseline + advanced + comparison)
 # ================================================================
 def exp2_matching(aig_results):
+    """
+    Experiment 2: Cone Matching — Baseline vs Advanced.
+
+    Runs both structural fingerprint (baseline) and WL hash (advanced)
+    matching on all 6 MATCHING_PAIRS. Computes false-positive counts
+    where fingerprint reports MATCH but WL reports MISMATCH.
+
+    Writes: table2_baseline.csv, table3_advanced.csv, table4_comparison.csv
+            baseline_cone_details.csv, advanced_cone_details.csv
+    Returns: (bl_rows, adv_rows, cmp_rows) — one row per pair per method.
+    """
     print("\n" + "=" * 70)
     print("  EXPERIMENT 2: CONE MATCHING — BASELINE vs ADVANCED")
     print("=" * 70)
@@ -317,6 +338,16 @@ def exp2_matching(aig_results):
 #  EXPERIMENT 3 — SCALABILITY
 # ================================================================
 def exp3_scalability(aig_results):
+    """
+    Experiment 3: Scalability Analysis.
+
+    Measures cone extraction and WL hashing time on the adder family
+    (4-bit, 8-bit, 16-bit, 32-bit) to characterise O(n) growth.
+
+    Writes: results/csv/table5_scalability.csv
+            results/tables/table5_scalability.txt
+    Returns: list of dicts with timing columns (Cone ms, FP ms, WL ms, Total ms).
+    """
     print("\n" + "=" * 70)
     print("  EXPERIMENT 3: SCALABILITY ANALYSIS")
     print("=" * 70)
@@ -371,6 +402,17 @@ def exp3_scalability(aig_results):
 #  EXPERIMENT 4 — WL CONVERGENCE
 # ================================================================
 def exp4_convergence(aig_results):
+    """
+    Experiment 4: WL Convergence Study.
+
+    Runs WL hashing with k from 1 to 6 on adder_8bit (9 cones).
+    Tracks the number of unique hashes and average distinct labels
+    per cone at each iteration depth. Determines the minimum k
+    at which hashes stabilise (i.e., convergence point).
+
+    Writes: results/csv/exp_convergence.csv
+    Returns: (rows, target_design_name).
+    """
     print("\n" + "=" * 70)
     print("  EXPERIMENT 4: WL CONVERGENCE")
     print("=" * 70)
@@ -406,6 +448,21 @@ def exp4_convergence(aig_results):
 #  EXPERIMENT 5 — CASE STUDY  (adder_4bit vs adder_4bit_mut2)
 # ================================================================
 def exp5_case_study(aig_results):
+    """
+    Experiment 5: Case Study — Carry Inversion Mutation.
+
+    Compares adder_4bit vs adder_4bit_mut2 (carry inversion: c[2] → ~c[2])
+    at per-cone granularity using both fingerprint and WL methods.
+    Identifies false positives: cones where fingerprint reports MATCH
+    but WL reports MISMATCH.
+
+    Expected result: po_3 and po_4 are false positives for fingerprint;
+    WL correctly reports them as MISMATCH (60% vs 100% match rate).
+
+    Writes: results/csv/table6_case_study.csv
+            results/tables/table6_case_study.txt
+    Returns: list of per-cone result dicts with Verdict column.
+    """
     print("\n" + "=" * 70)
     print("  EXPERIMENT 5: CASE STUDY — CARRY INVERSION MUTATION")
     print("  adder_4bit  vs  adder_4bit_mut2  (~c[2])")

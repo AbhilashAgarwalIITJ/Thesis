@@ -1,5 +1,5 @@
 """
-advanced_wl.py — Advanced WL hashing extension: semantic-aware + polarity-aware.
+advanced_wl.py — Advanced WL hashing extension: semantic-aware + inversion-aware.
 
 MTP Phase: MTP-3 (advanced hashing methods)
 
@@ -10,10 +10,12 @@ domain-specific enhancements:
      Initial labels encode gate type (PI, AND, PO, CONST0).
      This is the node-type-enriched variant.
 
-  2. Polarity-Aware WL:
+  2. Inversion-Aware WL:
      Initial labels encode gate type AND the inversion pattern
      of incoming edges. An AND gate fed by two inverted inputs
      is labeled differently from one fed by non-inverted inputs.
+     (Also referred to as polarity-aware in some prior drafts;
+     inversion-aware is the canonical term matching AIGER semantics.)
 
   3. Hybrid Score:
      Combines baseline and advanced hashes via a simple scoring
@@ -43,15 +45,17 @@ def _hash_str(s):
     return hashlib.sha256(s.encode()).hexdigest()[:16]
 
 
-def polarity_aware_wl(G, k=3):
+def inversion_aware_wl(G, k=3):
     """
-    Polarity-aware WL hashing.
+    Inversion-aware WL hashing.
 
     Unlike semantic-aware WL which only uses gate type, this also
     encodes the inversion pattern of each node's input edges.
+    Edges in an AIGER carry an inversion (NOT) bit; this variant
+    incorporates that bit into the initial node label.
 
     For an AND gate: label = "AND:inv0_inv1" where inv0/inv1
-    indicate whether each input is inverted.
+    indicate whether each input edge is inverting.
     """
     nodes = list(G.nodes())
     if not nodes:
@@ -125,8 +129,8 @@ def compute_advanced_hashes(cones_dict, k=3):
         bh, _, bc = wl_hash(G, k=k, semantic=False)
         # Semantic-aware
         sh, _, sc = wl_hash(G, k=k, semantic=True)
-        # Polarity-aware
-        ph, pc = polarity_aware_wl(G, k=k)
+        # Inversion-aware
+        ph, pc = inversion_aware_wl(G, k=k)
 
         results[po_node] = {
             'baseline_hash': bh,

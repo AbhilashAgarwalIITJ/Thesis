@@ -224,12 +224,12 @@ def plot_advanced_comparison():
 
     ax.bar(x - width, baseline, width, label='Baseline WL', color=COLORS['blue'], alpha=0.85)
     ax.bar(x, semantic, width, label='Semantic-Aware WL', color=COLORS['green'], alpha=0.85)
-    ax.bar(x + width, polarity, width, label='Polarity-Aware WL', color=COLORS['purple'], alpha=0.85)
+    ax.bar(x + width, polarity, width, label='Inversion-Aware WL', color=COLORS['purple'], alpha=0.85)
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
     ax.set_ylabel('Match Rate (%)', fontsize=11)
-    ax.set_title('Cone Match Rate: Baseline vs Semantic vs Polarity WL', fontsize=12, fontweight='bold')
+    ax.set_title('Cone Match Rate: Baseline vs Semantic vs Inversion-Aware WL', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10)
     ax.set_ylim(0, 110)
 

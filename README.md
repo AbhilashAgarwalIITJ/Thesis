@@ -118,7 +118,11 @@ them one output at a time. This gives us *fault localisation* — knowing not ju
 
 Modern VLSI design flows require verifying that two versions of a circuit — before and after synthesis optimisation, technology mapping, or manual editing — remain functionally consistent. Traditional approaches rely on formal equivalence checking (SAT/BDD), which is exact but scales poorly on large industrial netlists. Structural comparison methods exist but are shallow: they match aggregate statistics (gate counts, node counts) and miss subtle local differences such as inverted carry signals or swapped gate types.
 
-**This thesis investigates whether graph-based structural hashing — specifically Weisfeiler-Leman (WL) colour refinement applied to And-Inverter Graph (AIG) representations — can serve as a fast, scalable pre-filter for netlist equivalence checking, detecting structural mutations that simpler fingerprinting methods miss.**
+**This thesis investigates whether graph-based structural hashing — specifically Weisfeiler-Leman (WL) colour refinement applied to And-Inverter Graph (AIG) representations — can serve as a fast pre-filter for netlist equivalence checking, detecting structural mutations that simpler fingerprinting methods miss.**
+
+> **Scope:** Combinational circuits only (no sequential latches). AIG format
+> (AIGER). Evaluated on 13 benchmark circuits up to 32-bit width (387 nodes).
+> Structural matching — not functional verification. No trained model.
 
 ## Literature Gap
 
@@ -209,7 +213,7 @@ MTP-2 established the foundational pipeline and initial validation:
 | Yosys-based Verilog → AIG synthesis (single optimisation level) | `synthesize.py` | `aig_output/*.aig` |
 | AIGER ASCII parser → NetworkX directed graph | `parse_aiger.py` | In-memory DAGs |
 | Output cone extraction via backward traversal | `cone_extract.py` | Per-output subgraphs |
-| Basic WL hashing (structure-only, fixed k) | `wl_hash.py` | Hash per cone |
+| Structure-only WL hashing (uniform initial labels, fixed k) | `wl_hash.py` | Hash per cone |
 | Initial cone matching on 4-bit adder | `match_cones.py` | Match/mismatch list |
 | Preliminary graph statistics and visualisation | `graph_stats.py`, `generate_plots.py` | CSV + 7 plots |
 | Original 9-phase pipeline runner | `run_all.py` | End-to-end demo |
@@ -223,7 +227,7 @@ MTP-3 extended the pipeline with multi-level experiments, advanced hashing, and 
 | Multi-optimisation synthesis (O0 / O1 / O2) | `synthesize.py` (extended) | 3 AIG variants per design |
 | Expanded benchmark suite (8 designs + 2 mutants) | `designs/` | 10 Verilog files |
 | Baseline vs Advanced experiment framework | `experiments.py` | 6 comparison pairs × 2 methods |
-| Semantic-aware and polarity-aware WL hashing | `advanced_wl.py` | Improved cone hashes |
+| Semantic-aware and inversion-aware WL hashing | `advanced_wl.py` | Improved cone hashes |
 | Scalability analysis (4-bit → 32-bit) | `experiments.py` Exp 4 | Timing data |
 | WL convergence / iteration depth study (k=1..6) | `experiments.py` Exp 5 | Convergence curve |
 | False-positive detection and case-study analysis | `experiments.py` Exp 3 | Table 6 (case study) |
@@ -233,7 +237,7 @@ MTP-3 extended the pipeline with multi-level experiments, advanced hashing, and 
 
 ## Final Thesis Contribution
 
-1. **Cone-granularity WL hashing on AIGs** — a novel application of Weisfeiler-Leman colour refinement to per-output logic cones extracted from And-Inverter Graphs, providing a fast structural pre-filter for netlist equivalence checking.
+1. **Cone-granularity WL hashing on AIGs** — application of Weisfeiler-Leman colour refinement to per-output logic cones extracted from And-Inverter Graphs, providing a fast structural pre-filter for netlist equivalence checking (validated on 13 benchmarks, up to 387 nodes).
 
 2. **False-positive detection** — demonstrated that structural fingerprinting (node/edge/gate counts) reports 100% match on a carry-inversion mutation where WL hashing correctly identifies 2 out of 5 cones as structurally different (60% match), exposing a 40% false-positive rate in the baseline.
 
@@ -257,7 +261,7 @@ See [docs/RESULTS_SUMMARY.md](docs/RESULTS_SUMMARY.md) for detailed analysis.
 |---|---|---|
 | Designs | 1 (4-bit adder) | 8 designs + 2 mutants |
 | Synthesis | Single optimisation level | 3 levels (O0, O1, O2) |
-| Hashing | Structure-only WL | Semantic-aware + polarity-aware WL |
+| Hashing | Structure-only WL | Semantic-aware + inversion-aware WL |
 | Experiments | Self-matching demo | 5 controlled experiments |
 | Comparison | No baseline | Fingerprint baseline vs WL advanced |
 | Figures | 7 preliminary | 13 publication-ready |

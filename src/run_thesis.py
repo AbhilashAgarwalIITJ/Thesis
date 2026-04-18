@@ -104,7 +104,7 @@ def print_discussion(results):
 
   NEGATIVE RESULTS (present honestly)
   ------------------------------------
-  - Semantic-aware and polarity-aware WL give identical results on pure
+  - Semantic-aware and inversion-aware WL give identical results on pure
     AIG circuits.  REASON: AIG has only one gate type (AND), so semantic
     labels add no information beyond what WL iterations already capture.
     DISCUSSION: "For technology-mapped netlists with diverse gate types,

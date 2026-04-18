@@ -223,7 +223,7 @@ def generate_method_comparison_report(aig_results):
     lines = []
     lines.append("=" * 70)
     lines.append("EXPLAINABILITY REPORT 3: Method Comparison")
-    lines.append("Baseline vs Semantic-Aware vs Polarity-Aware WL Hashing")
+    lines.append("Baseline vs Semantic-Aware vs Inversion-Aware WL Hashing")
     lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     lines.append("=" * 70)
 
@@ -232,8 +232,8 @@ def generate_method_comparison_report(aig_results):
     lines.append("                     Only graph structure determines the hash.")
     lines.append("  Semantic-Aware WL: Initial label = gate type (PI, AND, PO).")
     lines.append("                     Encodes the functional role of each node.")
-    lines.append("  Polarity-Aware WL: Initial label = gate type + input inversion pattern.")
-    lines.append("                     Encodes both role and signal polarity.")
+    lines.append("  Inversion-Aware WL: Initial label = gate type + input inversion pattern.")
+    lines.append("                     Encodes both gate role and AIGER edge inversion bits.")
 
     # Precompute
     needed = set()
@@ -278,7 +278,7 @@ def generate_method_comparison_report(aig_results):
     lines.append("     ALL three methods agree on 100% match.")
     lines.append("  2. When mutations are present, the three methods generally agree")
     lines.append("     on which cones are affected, but may differ in edge cases.")
-    lines.append("  3. Polarity-aware WL captures the finest granularity since it")
+    lines.append("  3. Inversion-aware WL captures the finest granularity since it")
     lines.append("     distinguishes nodes by their inversion context.")
     lines.append("  4. The hybrid score provides a conservative aggregate measure.")
 

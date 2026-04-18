@@ -137,7 +137,7 @@ a proper baseline-vs-advanced comparison, and publication-ready outputs.
 | Mutation benchmarks | `adder_4bit_mut1` (XOR→OR gate swap), `adder_4bit_mut2` (carry inversion ~c[2]) | Done |
 | Baseline method (structural fingerprint) | 5-tuple per cone: (nodes, edges, AND, PI, depth) | Done |
 | Advanced method (semantic WL hash) | Gate-type-aware initial labels; k=3 WL iterations | Done |
-| Polarity-aware WL extension | Inversion-pattern encoding in WL labels | Done |
+| Inversion-aware WL extension | Inversion-pattern encoding in WL labels | Done |
 | Experiment 1: Pipeline validation | End-to-end on 4-bit adder; verify parsing, cones, hashing | Done |
 | Experiment 2: Re-synthesis equivalence | O0 vs O1, O1 vs O2 comparison | Done |
 | Experiment 3: Mutation detection | Gate-replace and carry-inversion; false-positive analysis | Done |
@@ -249,7 +249,7 @@ differs even though aggregate counts are identical.
 |---|---|
 | `src/synthesize.py` | Extended: multi-optimisation (O0/O1/O2) |
 | `src/wl_hash.py` | Extended: semantic-aware WL mode |
-| `src/advanced_wl.py` | New: polarity-aware + hybrid WL scoring |
+| `src/advanced_wl.py` | New: inversion-aware + hybrid WL scoring |
 | `src/experiments.py` | New: 5-experiment suite, baseline vs advanced framework |
 | `src/thesis_plots.py` | New: 6 thesis-quality figures from experiment CSVs |
 | `src/explainability.py` | New: human-readable analysis reports |
@@ -281,7 +281,7 @@ differs even though aggregate counts are identical.
 | AIGER parser | Complete | ASCII format, NetworkX output |
 | Cone extraction | Complete | All designs processed |
 | Baseline fingerprinting | Complete | 6 comparison pairs |
-| Advanced WL hashing | Complete | Semantic + polarity aware |
+| Advanced WL hashing | Complete | Semantic + inversion-aware |
 | Experiment 1 (validation) | Complete | End-to-end verified |
 | Experiment 2 (re-synthesis) | Complete | O0/O1/O2 comparisons |
 | Experiment 3 (mutation) | Complete | Gate-replace + carry-inversion |
@@ -333,7 +333,7 @@ MTP-2                              MTP-3
 ─────                              ─────
 1 design (4-bit adder)     →       8 designs + 2 mutants
 1 optimisation level       →       3 levels (O0, O1, O2)
-Structure-only WL hash     →       Semantic-aware + polarity-aware WL
+Structure-only WL hash     →       Semantic-aware + inversion-aware WL
 Self-matching demo         →       5 controlled experiments
 No baseline comparison     →       Fingerprint baseline vs WL advanced
 7 preliminary plots        →       13 publication-ready figures
