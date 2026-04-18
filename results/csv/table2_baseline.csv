@@ -1,0 +1,7 @@
+Pair,Category,Cones,Matched,Unmatched,Match %,Time ms
+adder_4bit vs adder_4bit_mut1,Mutation: Gate Replace (XOR->OR),5,2,3,40.0,0.04
+adder_4bit vs adder_4bit_mut2,Mutation: Carry Inversion (~c[2]),5,5,0,100.0,0.02
+adder_4bit_O0 vs adder_4bit_O1,Optimisation: Minimal vs Standard,5,1,4,20.0,0.02
+adder_4bit_O1 vs adder_4bit_O2,Optimisation: Standard vs Full,5,5,0,100.0,0.03
+adder_4bit vs counter_4bit,Cross-Design: Adder vs Counter,5,0,5,0.0,0.02
+adder_4bit vs alu_simple,Cross-Design: Adder vs ALU,5,0,5,0.0,0.02

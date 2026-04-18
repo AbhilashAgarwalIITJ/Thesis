@@ -1,0 +1,14 @@
+design,primary_inputs,primary_outputs,and_gates,total_nodes,total_edges,depth
+adder_16bit,33,17,144,195,305,65
+adder_32bit,65,33,288,387,609,129
+adder_4bit,9,5,36,51,77,17
+adder_4bit_O0,9,5,44,59,93,15
+adder_4bit_O1,9,5,36,51,77,17
+adder_4bit_O2,9,5,36,51,77,17
+adder_4bit_mut1,9,5,32,47,69,15
+adder_4bit_mut2,9,5,36,51,77,17
+adder_8bit,17,9,72,99,153,33
+alu_simple,10,5,84,100,173,12
+comparator_4bit,8,3,26,38,55,8
+counter_4bit,5,5,16,27,37,6
+mux_4to1,18,4,39,62,82,8

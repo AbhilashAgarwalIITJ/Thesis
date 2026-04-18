@@ -1,0 +1,6 @@
+Cone,Nodes A,Nodes B,AND A,AND B,Depth A,Depth B,FP Match,WL Match,Verdict
+po_0,10,10,6,6,5,5,True,True,Both Match
+po_1,18,18,12,12,7,7,True,True,Both Match
+po_2,26,26,18,18,9,9,True,True,Both Match
+po_3,34,34,24,24,11,11,True,False,"FALSE POSITIVE (FP match, WL reject)"
+po_4,34,34,24,24,9,9,True,False,"FALSE POSITIVE (FP match, WL reject)"

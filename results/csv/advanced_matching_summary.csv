@@ -1,0 +1,6 @@
+design_a,design_b,total_cones,baseline_matched,baseline_pct,semantic_matched,semantic_pct,polarity_matched,polarity_pct,hybrid_score
+adder_4bit,adder_4bit_mut1,5,2,40.0,2,40.0,2,40.0,40.0
+adder_4bit,adder_4bit_mut2,5,3,60.0,3,60.0,3,60.0,60.0
+adder_4bit_O0,adder_4bit_O1,5,1,20.0,1,20.0,1,20.0,20.0
+adder_4bit_O0,adder_4bit_O2,5,1,20.0,1,20.0,1,20.0,20.0
+adder_4bit_O1,adder_4bit_O2,5,5,100.0,5,100.0,5,100.0,100.0

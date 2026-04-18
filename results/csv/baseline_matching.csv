@@ -1,0 +1,6 @@
+design_a,design_b,total_cones,matched,diverged,match_pct
+adder_4bit_O0,adder_4bit_O1,5,1,4,20.0
+adder_4bit_O0,adder_4bit_O2,5,1,4,20.0
+adder_4bit_O1,adder_4bit_O2,5,5,0,100.0
+adder_4bit,adder_4bit_mut1,5,2,3,40.0
+adder_4bit,adder_4bit_mut2,5,3,2,60.0

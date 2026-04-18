@@ -1,0 +1,29 @@
+# Large binary toolchain
+oss-cad-suite/
+
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Downloaded installer
+*.exe
+
+# Word/PPT lock files
+~$*
+
+# Internal documents (slides, proposal, reports, presentation notes)
+*.pptx
+*.docx
+results/PRESENTATION_STRUCTURE.txt
+results/THESIS_REPORT_STRUCTURE.txt
+results/VIVA_PRESENTATION.txt
+results/reports/

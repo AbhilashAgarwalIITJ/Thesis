@@ -1,0 +1,14 @@
+design,num_cones,avg_cone_size,max_cone_size,min_cone_size,avg_cone_depth,max_cone_depth
+adder_16bit,17,73.5,130,10,20.8,35
+adder_32bit,33,137.8,258,10,36.9,67
+adder_4bit,5,24.4,34,10,8.2,11
+adder_4bit_O0,5,30.4,46,10,9.0,13
+adder_4bit_O1,5,24.4,34,10,8.2,11
+adder_4bit_O2,5,24.4,34,10,8.2,11
+adder_4bit_mut1,5,22.8,32,10,7.6,11
+adder_4bit_mut2,5,24.4,34,10,8.2,11
+adder_8bit,9,41.1,66,10,12.6,19
+alu_simple,5,36.2,51,13,7.6,10
+comparator_4bit,3,29.0,33,24,6.3,7
+counter_4bit,5,9.2,12,6,4.6,6
+mux_4to1,4,19.0,19,19,7.0,7

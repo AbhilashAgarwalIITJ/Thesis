@@ -1,0 +1,7 @@
+Category,Pair,Cones,Baseline %,Advanced %,False Pos,FP Rate %
+Mutation: Gate Replace (XOR->OR),adder_4bit vs adder_4bit_mut1,5,40.0,40.0,0,0.0
+Mutation: Carry Inversion (~c[2]),adder_4bit vs adder_4bit_mut2,5,100.0,60.0,2,40.0
+Optimisation: Minimal vs Standard,adder_4bit_O0 vs adder_4bit_O1,5,20.0,20.0,0,0.0
+Optimisation: Standard vs Full,adder_4bit_O1 vs adder_4bit_O2,5,100.0,100.0,0,0.0
+Cross-Design: Adder vs Counter,adder_4bit vs counter_4bit,5,0.0,0.0,0,0.0
+Cross-Design: Adder vs ALU,adder_4bit vs alu_simple,5,0.0,0.0,0,0.0

@@ -1,0 +1,5 @@
+design,bits,nodes,edges,and_gates,depth,num_cones,cone_extract_ms,wl_hash_ms,total_ms
+adder_4bit,4,51,77,36,17,5,1.17,1.02,2.18
+adder_8bit,8,99,153,72,33,9,4.02,3.38,7.4
+adder_16bit,16,195,305,144,65,17,15.06,11.54,26.6
+adder_32bit,32,387,609,288,129,33,93.34,38.58,131.92

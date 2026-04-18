@@ -1,0 +1,5 @@
+Design,Bits,Nodes,AND,Depth,Cones,Cone ms,FP ms,WL ms,Total ms
+adder_4bit,4,51,36,17,5,1.54,0.004,1.14,2.68
+adder_8bit,8,99,72,33,9,5.49,0.005,4.57,10.06
+adder_16bit,16,195,144,65,17,17.1,0.01,11.52,28.61
+adder_32bit,32,387,288,129,33,73.86,0.02,38.54,112.4
