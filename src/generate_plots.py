@@ -1,6 +1,8 @@
 """
 generate_plots.py — Thesis-quality plots from CSV data.
 
+MTP Phase: MTP-2 (preliminary visualisations)
+
 Reads CSVs from results/csv/ and produces publication-ready PNGs.
 Each plot corresponds to a thesis slide or report figure.
 

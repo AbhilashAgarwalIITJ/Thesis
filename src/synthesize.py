@@ -1,6 +1,8 @@
 """
 synthesize.py - Batch Yosys synthesis: Verilog -> AIG (AIGER format)
 Runs Yosys to synthesize each Verilog file and export as AIGER.
+
+MTP Phase: MTP-2 (core), MTP-3 (multi-optimisation O0/O1/O2 extension)
 """
 
 import subprocess

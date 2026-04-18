@@ -1,6 +1,8 @@
 """
 match_cones.py - Cone-level matching between two AIG designs.
 
+MTP Phase: MTP-2 (core matching logic)
+
 Compares WL hashes of output cones between design pairs to detect
 structural equivalence or divergence at cone granularity.
 """

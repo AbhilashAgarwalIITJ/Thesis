@@ -1,6 +1,8 @@
 """
 cone_extract.py - Extract output cones (fan-in cones) from AIG graphs.
 
+MTP Phase: MTP-2 (core cone extraction)
+
 An output cone for a primary output (PO) is the subgraph of all nodes
 that transitively feed into that output. This is the backward transitive
 fan-in from the PO node.

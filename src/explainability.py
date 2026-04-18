@@ -1,6 +1,8 @@
 """
 explainability.py — Generate human-readable explainability reports.
 
+MTP Phase: MTP-3 (analysis and reporting)
+
 Produces text reports that walk through the analysis of specific
 design pairs, showing WHY cones match or diverge.
 

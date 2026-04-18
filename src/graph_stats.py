@@ -1,6 +1,8 @@
 """
 graph_stats.py — Extract and export graph-level and node-level statistics.
 
+MTP Phase: MTP-2 (statistics collection)
+
 Produces:
   - graph_statistics.csv: per-design summary (nodes, edges, PI, AND, PO, depth)
   - cone_statistics.csv:  per-cone breakdown across all designs

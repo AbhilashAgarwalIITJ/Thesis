@@ -1,6 +1,8 @@
 """
 wl_hash.py - Weisfeiler-Leman (WL) graph hashing for AIG cones.
 
+MTP Phase: MTP-2 (structure-only WL), MTP-3 (semantic-aware mode)
+
 Implements the 1-dimensional WL test / color refinement algorithm.
 At each iteration:
   new_label(v) = hash( current_label(v), sorted([current_label(u) for u in neighbors(v)]) )

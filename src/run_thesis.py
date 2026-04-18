@@ -2,6 +2,8 @@
 run_thesis.py - Master Thesis Experiment Runner
 ================================================
 
+MTP Phase: MTP-3 (final thesis runner)
+
 Runs the COMPLETE thesis pipeline:
   1. Synthesise all Verilog -> AIG  (Yosys)
   2. Load all AIG graphs            (parse_aiger)

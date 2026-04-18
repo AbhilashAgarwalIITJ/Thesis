@@ -1,6 +1,8 @@
 """
 advanced_wl.py — Advanced WL hashing extension: semantic-aware + polarity-aware.
 
+MTP Phase: MTP-3 (advanced hashing methods)
+
 This module extends the baseline (structure-only) WL hashing with two
 domain-specific enhancements:
 

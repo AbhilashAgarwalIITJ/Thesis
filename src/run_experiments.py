@@ -1,6 +1,8 @@
 """
 run_experiments.py - Master experiment runner.
 
+MTP Phase: MTP-3 (experiment automation)
+
 Runs all 5 experiments, generates tables and plots.
 Experiment 1: Pipeline Validation (end-to-end demo)
 Experiment 2: Self-Equivalence Under Re-synthesis (optimization levels)

@@ -1,6 +1,8 @@
 """
 parse_aiger.py - Parse ASCII AIGER format into NetworkX directed graph.
 
+MTP Phase: MTP-2 (core parser)
+
 AIGER ASCII format:
   Line 1: aag M I L O A
     M = max variable index

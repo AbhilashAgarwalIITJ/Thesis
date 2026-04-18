@@ -2,6 +2,8 @@
 experiments.py - Thesis Experiment Suite
 ========================================
 
+MTP Phase: MTP-3 (full experiment framework)
+
 Thesis: AI-Augmented Verilog Netlist Matching Using AIG and Graph Neural Networks
 
 BASELINE METHOD: Structural Fingerprint Matching

@@ -1,6 +1,8 @@
 """
 run_all.py — Master thesis pipeline orchestrator.
 
+MTP Phase: MTP-2 (original pipeline runner)
+
 Runs the COMPLETE thesis pipeline end-to-end:
   Phase 1: Synthesis (Verilog → AIG via Yosys)
   Phase 2: Graph statistics extraction → CSV
