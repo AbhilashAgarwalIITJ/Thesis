@@ -6,6 +6,114 @@
 
 ---
 
+## Background: Key Concepts for Non-EDA Readers
+
+> This section is for readers from an AI/ML or software background who are not familiar
+> with hardware design terminology. Skip to [Problem Statement](#problem-statement) if
+> you already know what Verilog, netlists, and AIGs are.
+
+### What is Verilog and why do we write circuits in code?
+
+Verilog is a **Hardware Description Language (HDL)** — a programming language used to
+describe the logical structure of digital circuits, the same way Python describes
+algorithms. Instead of running on a CPU, Verilog code describes *what the hardware
+should do* — e.g., "add these two numbers" or "select one of four inputs."
+
+**Analogy:** Verilog is to hardware what Python is to software. Just as Python source
+code gets compiled to machine code, Verilog source gets *synthesised* (compiled) into
+a physical circuit on a chip.
+
+### What does 4-bit / 32-bit mean?
+
+It means the **data width** — how many binary digits (bits) the circuit processes in
+parallel.
+
+- A **4-bit adder** adds two 4-bit numbers (0–15). It has 4 sum outputs + 1 carry output
+  = **5 primary outputs (POs)**.
+- A **32-bit adder** adds two 32-bit numbers (0–4 billion). It has **33 outputs**.
+- As the width doubles, the circuit complexity roughly **doubles** in size and depth.
+
+**Why a family of adders?** Because it lets us test whether our method scales linearly
+with circuit size — one of the thesis experiments.
+
+### What are benchmarks and mutants?
+
+| Term | Plain-English meaning |
+|---|---|
+| **Benchmark** | A standard test circuit used to evaluate a method — like a test dataset in ML |
+| **8 base designs** | 8 different circuit types: adders (4/8/16/32-bit), a multiplexer, counter, ALU, comparator |
+| **Mutant** | A deliberately buggy version of a circuit — like adding adversarial noise to an image |
+| **mut1 (gate replace)** | Swapped one XOR gate for an OR gate — a structural change easily detected |
+| **mut2 (carry inversion)** | Flipped one wire's polarity (~c[2]) — a subtle change that breaks the circuit but leaves all aggregate statistics identical |
+
+### What is synthesis and what is an AIGER file?
+
+**Synthesis** converts the high-level Verilog description into a low-level network of
+simple logic gates — specifically **AND gates and inverters (NOT gates)**. This is done
+by Yosys, an open-source synthesis tool.
+
+The output is stored in **AIGER format (.aig)** — a standardised file format for
+And-Inverter Graphs. Think of it as a serialised edge list of a DAG, where every node
+is either:
+
+| Node type | Meaning |
+|---|---|
+| **PI** (Primary Input) | An input wire — like a feature in ML |
+| **AND gate** | A 2-input AND logic gate |
+| **Inverter** | A NOT gate — stored as an *edge attribute*, not a separate node |
+| **PO** (Primary Output) | An output wire — like a label in ML |
+
+**Analogy:** If a Python function is Verilog, then the AIGER file is the compiled
+bytecode's call graph — a DAG showing how every output depends on every input.
+
+### What is an AIG (And-Inverter Graph)?
+
+An AIG is a **Directed Acyclic Graph (DAG)** where:
+- Nodes = AND gates or input wires
+- Edges = wire connections, with an `inverted` attribute marking NOT operations
+- The structure captures *exactly* how every output bit is computed from the inputs
+
+```
+PI_a ──┐
+       AND ──── PO_sum[0]
+PI_b ──┘ (one input inverted = XOR-like behaviour)
+PI_cin─┘
+```
+
+**Why AIGs?** Every Boolean function can be expressed using only AND + NOT. AIGs are
+the universal representation in formal verification — like how any neural network layer
+can be expressed as matrix multiplications.
+
+### What is netlist matching and why is it hard?
+
+A **netlist** is the gate-level description of a circuit after synthesis. **Netlist
+matching** asks: *"Are these two circuits structurally the same?"*
+
+This is hard for the same reason graph isomorphism is hard: two circuits can look
+completely different structurally but compute the same function (after optimisation),
+or look identical by all aggregate counts but differ in one wire's polarity (mutation).
+
+**The thesis problem in one sentence:** Can we detect that two circuits are *not*
+the same, faster and more accurately than counting their gates?
+
+### What is an output cone?
+
+In a combinational circuit, each output depends on a *subset* of the inputs. The
+**output cone** of one output is the subgraph of all gates that can influence that
+specific output — the "fan-in" of that output.
+
+```
+All inputs ──► [some gates] ──► sum[0]   ← cone for sum[0] is these gates only
+            ──► [more gates] ──► sum[1]   ← different cone
+            ──► [all gates] ──► carry_out ← largest cone (depends on everything)
+```
+
+**Why cones matter:** Instead of comparing two entire circuits at once, we compare
+them one output at a time. This gives us *fault localisation* — knowing not just
+"the circuits differ" but "specifically output #4 differs."
+
+---
+
 ## Problem Statement
 
 Modern VLSI design flows require verifying that two versions of a circuit — before and after synthesis optimisation, technology mapping, or manual editing — remain functionally consistent. Traditional approaches rely on formal equivalence checking (SAT/BDD), which is exact but scales poorly on large industrial netlists. Structural comparison methods exist but are shallow: they match aggregate statistics (gate counts, node counts) and miss subtle local differences such as inverted carry signals or swapped gate types.
@@ -25,6 +133,11 @@ Modern VLSI design flows require verifying that two versions of a circuit — be
 
 ## AI Relevance: The WL–GNN Equivalence
 
+> **For the M.Tech AI viva panel:** The thesis title includes "Graph Neural Networks"
+> not aspirationally but analytically. The justification is grounded in two
+> peer-reviewed papers from top ML venues (ICLR 2019, NeurIPS 2019). The argument
+> below is the core defence.
+
 The thesis title includes "Graph Neural Networks" by design: the WL hashing algorithm used in this work is not merely a graph-similarity heuristic — it is the **analytical foundation of message-passing Graph Neural Networks**.
 
 Xu et al. (ICLR 2019, *"How Powerful are Graph Neural Networks?"*) and Morris et al. (NeurIPS 2019, *"Weisfeiler and Leman Go Neural"*) formally proved that any message-passing GNN with an injective neighbourhood-aggregation function has expressive power **exactly equivalent** to the 1-WL colour refinement algorithm. Two graphs that WL hashing cannot distinguish cannot be distinguished by any such GNN either.
@@ -37,11 +150,30 @@ Xu et al. (ICLR 2019, *"How Powerful are Graph Neural Networks?"*) and Morris et
 | Interpretability | Full (per-node label trace) | Low (embedding space) |
 | Expressive power | 1-WL upper bound | ≤ 1-WL upper bound |
 | Deployment complexity | Single Python file | Training pipeline + GPU |
-| Theoretical grounding | Proven equivalence | Empirical |
+| Theoretical grounding | Proven equivalence (Xu 2019) | Empirical |
 
-This work therefore serves a dual role: (1) a practical pre-filter for equivalence checking, and (2) the **AI-for-EDA baseline** that any future GNN approach on this problem must surpass to justify its added complexity.
+**Why a trained GNN was not implemented:** No public benchmark dataset of labelled
+netlist equivalence pairs exists for training. WL hashing achieves the theoretical
+1-GNN upper bound without such data. Collecting labelled pairs and training a Graph
+Isomorphism Network (GIN) is explicitly the **primary future work** of this thesis.
 
-> **Terminology note:** In this thesis, "WL hashing" and "WL graph hashing" always refer to the 1-WL / Weisfeiler-Leman colour refinement algorithm as described by Xu et al. (2019). A "trained GNN" is positioned as future work. No GNN model was trained; none is needed to achieve the 1-WL analytical bound.
+This work therefore serves a dual role: (1) a practical pre-filter for equivalence
+checking, and (2) the **AI-for-EDA baseline** that any future GNN approach on this
+problem must surpass to justify its added complexity.
+
+```
+WL Colour Refinement  ←──── proved equivalent ────►  Message-Passing GNN
+  (this thesis)                                         (future work: GIN)
+  [Xu et al. ICLR 2019 / Morris et al. NeurIPS 2019]
+  
+  Both compute: f(v) = HASH(f(v), {f(u) : u ∈ N(v)})  for k rounds
+  ↑ This IS neural message passing, without learned weights
+```
+
+> **Terminology note:** "WL hashing" and "WL graph hashing" refer to the 1-WL /
+> Weisfeiler-Leman colour refinement algorithm. "Trained GNN" refers to a GNN with
+> learnable parameters, positioned as future work. No GNN model was trained — none
+> is needed to achieve the 1-WL analytical bound.
 
 ## Pipeline
 

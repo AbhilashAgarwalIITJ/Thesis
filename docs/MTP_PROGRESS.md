@@ -4,8 +4,61 @@
 
 **AI-Augmented Verilog Netlist Matching Using AIG and Graph Neural Networks**
 
-M.Tech (AI), Department of Electrical Engineering, IIT Jodhpur  
+M.Tech (AI), School of Artificial Intelligence and Data Science (AIDE), IIT Jodhpur
 Author: Abhilash Agarwal
+
+---
+
+## 0. Glossary — Key Concepts for Non-EDA Background Readers
+
+This thesis sits at the intersection of AI/ML and Electronic Design Automation (EDA).
+Readers from an AI background who are unfamiliar with EDA terminology will find this
+glossary useful.
+
+| Term | Plain-English Explanation | AI/ML Analogy |
+|---|---|---|
+| **Verilog** | Hardware description language — code that describes a digital circuit | Like Python for hardware |
+| **Synthesis** | Compiling Verilog into a gate-level circuit (AND gates + inverters) | Like compilation: source code → machine code |
+| **Netlist** | The compiled gate-level circuit representation | Like a computation graph in PyTorch |
+| **AIG (And-Inverter Graph)** | A DAG where nodes = AND gates, edges carry NOT markers | Like a binary neural network layer graph |
+| **AIGER file (.aig)** | Standard file format to store an AIG — ASCII edge list of the DAG | Like a `.pt` model checkpoint, but for logic circuits |
+| **Primary Input (PI)** | A circuit input wire | Like a feature / input node in a GNN |
+| **Primary Output (PO)** | A circuit output wire | Like a label / output node in a GNN |
+| **4-bit adder** | A circuit that adds two 4-bit numbers (0–15), producing 5 outputs | A DAG with ~50 nodes |
+| **32-bit adder** | Same, for 32-bit numbers (0–4B), producing 33 outputs | A DAG with ~387 nodes |
+| **Mutant circuit** | A deliberately modified version of a circuit to introduce a bug | Like an adversarial example |
+| **mut2 (carry inversion)** | A mutation where one wire's polarity is flipped (~c[2]) | Like flipping one weight's sign in a neural network |
+| **Output cone** | The fan-in subgraph of one output — all gates that affect it | Like the receptive field of one output neuron |
+| **Equivalence checking** | Verifying that two circuits compute the same function | Like checking if two models produce identical outputs |
+| **Structural fingerprint** | A 5-tuple of aggregate statistics per cone | Like using only mean/variance to compare two images |
+| **WL hashing** | Weisfeiler-Leman colour refinement — a topology-aware hash | Analytically equivalent to a message-passing GNN |
+| **False positive** | Fingerprint says "same" when circuits are actually different | Like a classifier predicting positive on a negative example |
+| **Yosys** | Open-source synthesis tool (converts Verilog → AIG) | Like TensorFlow: a framework, not the model |
+
+### The Core Question in Plain English
+
+> "Given two versions of the same circuit (original and possibly modified), can we
+> automatically detect *which outputs changed* and *how*, without running expensive
+> formal verification on the entire circuit?"
+
+This is equivalent to asking: *given two computation graphs, which output nodes produce
+different results for the same input, and can we determine this by comparing the graph
+structure alone?*
+
+### Why This Belongs in an M.Tech AI Programme
+
+The method used — Weisfeiler-Leman (WL) graph hashing — is the **analytical equivalent
+of a message-passing GNN** (Xu et al., ICLR 2019). The thesis establishes the GNN
+upper-bound baseline for the AI-for-EDA domain:
+
+```
+This thesis:  WL hashing on AIG cones  ←proven equivalent→  1-layer MPGNN
+Future work:  Train a GIN on labelled netlist pairs → learn beyond WL if possible
+```
+
+The AI contribution is methodological: applying the GNN-equivalent computation to a
+new domain (hardware verification), demonstrating it detects bugs that simpler methods
+miss, and establishing the baseline that future trained GNN approaches must surpass.
 
 ---
 
