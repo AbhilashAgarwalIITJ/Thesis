@@ -1,6 +1,6 @@
 # AI-Augmented Verilog Netlist Matching Using AIG and Graph Neural Networks
 
-**M.Tech Thesis** — Department of Electrical Engineering, IIT Jodhpur  
+**M.Tech Thesis** — School of Artificial Intelligence and Data Science (AIDE), IIT Jodhpur  
 **Author:** Abhilash Agarwal  
 **Semesters:** MTP-2 (Foundation) → MTP-3 (Completion)  
 **Repository:** [github.com/AbhilashAgarwalIITJ/Thesis](https://github.com/AbhilashAgarwalIITJ/Thesis)
