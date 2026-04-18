@@ -201,3 +201,38 @@ All 18 CSV files in `results/csv/`:
 | `advanced_matching_details.csv` | Advanced per-cone | Pair, Cone, hash values |
 | `advanced_cone_details.csv` | Advanced cone stats | Pair, Cone, hash details |
 | `wl_convergence.csv` | WL convergence raw | k, hash counts, label counts |
+
+---
+
+## Theoretical Foundation: WL Hashing as a GNN Analytical Equivalent
+
+The WL hashing algorithm used in this work is not merely a graph-similarity heuristic. It is the
+**analytical foundation of message-passing Graph Neural Networks (MPGNNs)**.
+
+**Key theorems (from literature):**
+
+- **Xu et al. (ICLR 2019)** — *"How Powerful are Graph Neural Networks?"*:
+  Any MPGNN with an injective neighbourhood-aggregation function is **at most** as powerful as
+  the 1-WL colour refinement algorithm in distinguishing graph structures. GNNs that use sum
+  aggregation with injective update (e.g., Graph Isomorphism Network, GIN) achieve this upper bound.
+
+- **Morris et al. (NeurIPS 2019)** — *"Weisfeiler and Leman Go Neural"*:
+  Formally defines k-WL and k-GNN equivalence, showing that standard MPGNNs correspond to 1-WL.
+
+**Implication for this work:**
+
+By implementing 1-WL hashing on AIG output cones, this thesis implements the **analytical upper
+bound** of what any trained MPGNN could discriminate on these graphs. A GNN trained for netlist
+equivalence prediction could not outperform WL hashing on the graphs where 1-WL distinguishes
+them — it can only match this performance without training data.
+
+This establishes WL hashing as the **AI-for-EDA baseline**: any future GNN approach on netlist
+comparison must surpass this analytical bound (by using k-WL for k≥2, or auxiliary features) to
+justify its added training and inference complexity.
+
+**Why no GNN was trained in this work:**
+
+Training a GNN requires labelled pairs of equivalent/non-equivalent netlists. No public benchmark
+dataset of labelled netlist equivalence pairs exists at the time of this work. The WL-hash approach
+achieves the 1-GNN upper bound entirely without such data. Collecting labelled data and training a
+GIN is explicitly identified as the primary future work direction.

@@ -19,6 +19,18 @@ WL hashing at cone granularity detects subtle structural mutations — such as a
 inverted carry signal — that aggregate-statistic fingerprinting methods miss entirely,
 producing false positives.
 
+**AI Relevance — The WL–GNN Equivalence:**
+
+The WL hashing algorithm is the analytical foundation of message-passing Graph Neural
+Networks (MPGNNs). Xu et al. (ICLR 2019) and Morris et al. (NeurIPS 2019) formally
+proved that any MPGNN with injective aggregation has expressive power exactly equivalent
+to 1-WL colour refinement. By implementing WL hashing on AIG cones, this thesis
+implements the analytical upper bound of what any trained GNN could discriminate on
+these graphs — without labelled training data, GPU, or hyperparameter tuning. The
+approach thus serves as the AI-for-EDA baseline that future trained GNN approaches
+must exceed to justify their added complexity. A trained GNN (GIN, Xu et al. 2019)
+trained on labelled netlist equivalence pairs is the primary future work direction.
+
 ---
 
 ## 2. Project Objective
@@ -247,15 +259,17 @@ differs even though aggregate counts are identical.
 
 ### Next Steps
 
-1. **ISCAS/ITC benchmarks.** Evaluate on standard academic benchmarks (e.g., ISCAS-85, ITC-99) for comparability with published results.
+1. **Supervised GNN training (primary future work).** Collect labelled netlist equivalence pairs and train a Graph Isomorphism Network (GIN, Xu et al. ICLR 2019) to learn embeddings for netlist comparison. The WL hashing in this thesis establishes the 1-GNN analytical upper bound; a trained GNN is the natural next step to surpass this bound using learned features.
 
-2. **Higher-order WL or GNN embeddings.** Replace 1-WL with k-WL or a trained GNN to improve discriminative power on circuits where 1-WL hashes collide.
+2. **ISCAS/ITC benchmarks.** Evaluate on standard academic benchmarks (e.g., ISCAS-85, ITC-99) for comparability with published results.
 
-3. **Integration with formal verification.** Use WL-based matching as a pre-filter: matched cones are assumed equivalent, mismatched cones are forwarded to a SAT solver for exact checking. This could reduce SAT solver load significantly on large designs.
+3. **Higher-order WL (k-WL, k≥2).** Improve discriminative power for circuits where 1-WL hashes collide, at O(V^k) cost. This is stronger than standard MPGNNs.
 
-4. **Technology-mapped netlists.** Extend parsing to handle post-synthesis gate-level netlists (e.g., Liberty-mapped cells) in addition to AIG.
+4. **Integration with formal verification.** Use WL-based matching as a pre-filter: matched cones are assumed equivalent, mismatched cones are forwarded to a SAT solver for exact checking. This could reduce SAT solver load significantly on large designs.
 
-5. **Sequential circuit support.** Handle flip-flop boundaries by either timeframe unrolling or treating latch outputs as additional primary inputs.
+5. **Technology-mapped netlists.** Extend parsing to handle post-synthesis gate-level netlists (e.g., Liberty-mapped cells) in addition to AIG.
+
+6. **Sequential circuit support.** Handle flip-flop boundaries by either timeframe unrolling or treating latch outputs as additional primary inputs.
 
 ---
 
