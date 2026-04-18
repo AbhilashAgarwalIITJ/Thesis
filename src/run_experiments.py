@@ -665,14 +665,21 @@ if __name__ == "__main__":
     print("AI-Augmented Verilog Netlist Matching Using AIG and GNNs")
     print("="*60)
 
-    # Step 1: Find Yosys
+    # Step 1: Find Yosys (optional if AIGs already exist)
     yosys_bin = find_yosys()
-    if not yosys_bin:
-        print("[!] Yosys not found. Cannot proceed.")
-        sys.exit(1)
 
-    # Step 2: Synthesize all designs
-    synthesize_all(yosys_bin)
+    # Step 2: Synthesize all designs (skip if AIGs present)
+    aig_files = [f for f in os.listdir(AIG_DIR) if f.endswith('.aig')] if os.path.isdir(AIG_DIR) else []
+    if len(aig_files) >= 10:
+        print(f"\n[.] Found {len(aig_files)} pre-built AIG files in aig_output/ — skipping synthesis.")
+        if not yosys_bin:
+            print("[.] Yosys not found, but not needed (using pre-generated AIGs).")
+    elif yosys_bin:
+        synthesize_all(yosys_bin)
+    else:
+        print("[!] Yosys not found and no pre-generated AIG files in aig_output/.")
+        print("    Either install Yosys (oss-cad-suite) or ensure aig_output/ has .aig files.")
+        sys.exit(1)
 
     # Step 3: Load all AIGs
     print("\n" + "="*60)

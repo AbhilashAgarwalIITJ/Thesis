@@ -61,89 +61,97 @@ Scalability: 4-bit adder 2.7 ms → 32-bit adder 112 ms (linear growth).
 │   ├── csv/                  # 18 experiment data files
 │   ├── plots/                # 13 figures (PNG)
 │   └── tables/               # 6 formatted result tables
+└── requirements.txt          # Python dependencies
 ```
 
-## Prerequisites
+## Quick Start (No Yosys needed)
 
-- **Python 3.10+** with pip
-- **Yosys** (for synthesis from Verilog → AIGER)
-  - Recommended: [oss-cad-suite](https://github.com/YosysHQ/oss-cad-suite-build/releases) (includes Yosys + ABC)
-  - On Windows, extract the self-extracting archive and ensure `bin/` and `lib/` are on PATH
+The repository includes **pre-generated AIGER files** in `aig_output/`, so you can run
+all experiments without installing Yosys. Just clone, install Python dependencies, and run.
 
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/AbhilashAgarwalIITJ/Thesis.git
-cd Thesis
-
-# Create virtual environment
-python -m venv .venv
-
-# Activate (Windows PowerShell)
-.\.venv\Scripts\Activate.ps1
-# Activate (Linux/macOS)
-# source .venv/bin/activate
-
-# Install dependencies
-pip install networkx matplotlib numpy pandas tabulate
-```
-
-### Yosys Setup (Windows)
+### Windows (PowerShell)
 
 ```powershell
-# Download oss-cad-suite from GitHub releases, extract it into the project folder
-# Then add to PATH before running:
-$env:PATH = "path\to\oss-cad-suite\bin;path\to\oss-cad-suite\lib;" + $env:PATH
-yosys -V  # verify: should print "Yosys 0.x ..."
+git clone https://github.com/AbhilashAgarwalIITJ/Thesis.git
+cd Thesis
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python src/run_thesis.py
 ```
 
-### Yosys Setup (Linux)
+### Linux / macOS
 
 ```bash
-# Ubuntu/Debian
-sudo apt install yosys
-# Or download oss-cad-suite and add to PATH
+git clone https://github.com/AbhilashAgarwalIITJ/Thesis.git
+cd Thesis
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python src/run_thesis.py
+```
+
+Results will be written to `results/csv/`, `results/plots/`, and `results/tables/`.
+
+## Full Setup (with Yosys for re-synthesis)
+
+If you want to re-synthesise the Verilog designs from scratch (not required — AIGs
+are already included), install Yosys:
+
+### Windows
+
+1. Download [oss-cad-suite](https://github.com/YosysHQ/oss-cad-suite-build/releases) (the `windows-x64` self-extracting `.exe`)
+2. Extract it into the project folder (creates an `oss-cad-suite/` directory)
+3. Add to PATH before running:
+
+```powershell
+$env:PATH = ".\oss-cad-suite\bin;.\oss-cad-suite\lib;" + $env:PATH
+yosys -V   # should print "Yosys 0.x ..."
+python src/run_thesis.py
+```
+
+### Linux
+
+```bash
+sudo apt install yosys   # Ubuntu/Debian
+# or download oss-cad-suite and add bin/ to PATH
+python src/run_thesis.py
 ```
 
 ## Usage
 
-### Full Pipeline (synthesis + experiments + plots)
+### Full Pipeline (recommended)
 
 ```bash
 python src/run_thesis.py
 ```
 
-This runs the complete pipeline:
-1. Synthesises all Verilog designs at 3 optimisation levels (O0, O1, O2)
+Runs everything end-to-end:
+1. Synthesis (skipped automatically if `aig_output/` has pre-built `.aig` files)
 2. Parses AIGER files into graph representations
 3. Runs 5 experiments (mutation, optimisation, cross-design, scalability, convergence)
 4. Generates 6 tables, 6 thesis figures, and prints discussion notes
 
-### Skip Synthesis (use pre-generated AIGER files)
-
-If you don't have Yosys installed, the `aig_output/` directory already contains all synthesised AIGER files. You can run experiments directly:
-
-```bash
-python src/run_experiments.py
-```
-
 ### Individual Modules
 
 ```python
-from src.parse_aiger import parse_aiger
-from src.cone_extract import extract_cones
-from src.wl_hash import wl_hash
+import sys, os
+sys.path.insert(0, "src")
+
+from parse_aiger import parse_aiger_file, aiger_to_networkx
+from cone_extract import extract_all_cones
+from wl_hash import wl_hash_all_cones
 
 # Parse an AIGER file
-graph = parse_aiger("aig_output/adder_4bit.aig")
+parsed = parse_aiger_file("aig_output/adder_4bit.aig")
+G, po_nodes = aiger_to_networkx(parsed)
 
 # Extract output cones
-cones = extract_cones(graph)
+cones = extract_all_cones(G, po_nodes)
 
 # Compute WL hash for each cone
-for name, cone in cones.items():
-    h = wl_hash(cone, k=3)
+hashes = wl_hash_all_cones(cones, k=3, semantic=True)
+for name, h in hashes.items():
     print(f"{name}: {h}")
 ```
 
@@ -151,9 +159,11 @@ for name, cone in cones.items():
 
 All results are written to `results/`:
 
-- **`results/csv/`** — Raw data (18 CSV files) including benchmark stats, matching details, scalability timings, convergence data
-- **`results/plots/`** — 13 publication-ready figures (PNG)
-- **`results/tables/`** — 6 formatted tables (text/grid format)
+| Directory | Contents |
+|---|---|
+| `results/csv/` | 18 CSV files — benchmark stats, matching details, scalability timings, convergence data |
+| `results/plots/` | 13 PNG figures — publication-ready charts and visualisations |
+| `results/tables/` | 6 text files — formatted grid tables for each experiment |
 
 ## Method Summary
 

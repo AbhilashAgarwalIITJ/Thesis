@@ -161,14 +161,21 @@ def main():
     print("  Thesis Experiment Runner")
     print("=" * 70)
 
-    # 1. Find Yosys
+    # 1. Find Yosys (optional if AIGs already exist)
     yosys_bin = find_yosys()
-    if not yosys_bin:
-        print("\n[!] Yosys not found.  Ensure oss-cad-suite is in the project root.")
-        sys.exit(1)
 
-    # 2. Synthesise
-    synthesise_all(yosys_bin)
+    # 2. Synthesise (skip if AIGs already present)
+    aig_files = [f for f in os.listdir(AIG_DIR) if f.endswith('.aig')] if os.path.isdir(AIG_DIR) else []
+    if len(aig_files) >= 10:
+        print(f"\n  Found {len(aig_files)} pre-built AIG files — skipping synthesis.")
+        if not yosys_bin:
+            print("  Yosys not found, but not needed (using pre-generated AIGs).")
+    elif yosys_bin:
+        synthesise_all(yosys_bin)
+    else:
+        print("\n[!] Yosys not found and no pre-generated AIG files in aig_output/.")
+        print("    Either install Yosys (oss-cad-suite) or ensure aig_output/ has .aig files.")
+        sys.exit(1)
 
     # 3. Load AIGs
     print("\n  Loading AIG files...")
