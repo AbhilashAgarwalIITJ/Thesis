@@ -99,6 +99,23 @@ MTP-3 extended the pipeline with multi-level experiments, advanced hashing, and 
 
 See [docs/RESULTS_SUMMARY.md](docs/RESULTS_SUMMARY.md) for detailed analysis.
 
+## Academic Milestone Mapping
+
+| Aspect | MTP-2 (Foundation) | MTP-3 (Completion) |
+|---|---|---|
+| Designs | 1 (4-bit adder) | 8 designs + 2 mutants |
+| Synthesis | Single optimisation level | 3 levels (O0, O1, O2) |
+| Hashing | Structure-only WL | Semantic-aware + polarity-aware WL |
+| Experiments | Self-matching demo | 5 controlled experiments |
+| Comparison | No baseline | Fingerprint baseline vs WL advanced |
+| Figures | 7 preliminary | 13 publication-ready |
+| Tables | None | 6 formatted |
+| Mutation testing | None | Gate replacement + carry inversion |
+| Scalability | Not measured | 4→32 bit timing analysis |
+| Runner | `run_all.py` (demo) | `run_thesis.py` (reproducible) |
+
+For detailed MTP-2/MTP-3 breakdown with per-script mapping, see [docs/MTP_PROGRESS.md](docs/MTP_PROGRESS.md).
+
 ## Repository Structure
 
 ```
