@@ -137,11 +137,6 @@ Modern VLSI design flows require verifying that two versions of a circuit — be
 
 ## AI Relevance: The WL–GNN Equivalence
 
-> **For the M.Tech AI viva panel:** The thesis title includes "Graph Neural Networks"
-> not aspirationally but analytically. The justification is grounded in two
-> peer-reviewed papers from top ML venues (ICLR 2019, NeurIPS 2019). The argument
-> below is the core defence.
-
 The thesis title includes "Graph Neural Networks" by design: the WL hashing algorithm used in this work is not merely a graph-similarity heuristic — it is the **analytical foundation of message-passing Graph Neural Networks**.
 
 Xu et al. (ICLR 2019, *"How Powerful are Graph Neural Networks?"*) and Morris et al. (NeurIPS 2019, *"Weisfeiler and Leman Go Neural"*) formally proved that any message-passing GNN with an injective neighbourhood-aggregation function has expressive power **exactly equivalent** to the 1-WL colour refinement algorithm. Two graphs that WL hashing cannot distinguish cannot be distinguished by any such GNN either.
